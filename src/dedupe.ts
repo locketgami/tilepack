@@ -53,3 +53,14 @@ export function resolveAlias(name: string, aliases: Map<string, string>): string
 
   return current;
 }
+
+/**
+ * Returns the number of bytes saved by deduplication.
+ * Useful for logging or reporting compression efficiency.
+ */
+export function dedupeBytesSaved(frames: Frame[], result: DedupeResult): number {
+  const aliasedNames = new Set(result.aliases.keys());
+  return frames
+    .filter((f) => aliasedNames.has(f.name))
+    .reduce((sum, f) => sum + f.data.byteLength, 0);
+}
