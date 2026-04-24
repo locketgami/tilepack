@@ -1,0 +1,13 @@
+{
+  "input": "./sprites",
+  "output": "./dist",
+  "name": "tileset",
+  "tileSize": 16,
+  "padding": 1,
+  "maxWidth": 2048,
+  "maxHeight": 2048,
+  "format": "png",
+  "metaFormat": "json",
+  "deduplicate": true,
+  "powerOfTwo": true
+}
