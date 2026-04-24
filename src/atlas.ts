@@ -1,57 +1,50 @@
-import { PackResult, PackedFrame } from "./packer";
+export interface FrameRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
-export interface AtlasFrame {
-  id: string;
-  frame: { x: number; y: number; w: number; h: number };
+export interface FrameEntry {
+  frame: FrameRect;
   rotated: boolean;
+  trimmed: boolean;
   sourceSize: { w: number; h: number };
-  spriteSourceSize: { x: number; y: number; w: number; h: number };
 }
 
 export interface AtlasManifest {
   meta: {
-    app: string;
-    version: string;
+    image: string;
     size: { w: number; h: number };
     scale: number;
   };
-  frames: Record<string, AtlasFrame>;
+  frames: Record<string, FrameEntry>;
 }
 
 export function buildManifest(
-  packResult: PackResult,
-  version: string = "1.0"
+  image: string,
+  atlasSize: { w: number; h: number },
+  entries: Array<{ name: string } & FrameEntry>
 ): AtlasManifest {
-  const frames: Record<string, AtlasFrame> = {};
-
-  for (const pf of packResult.frames) {
-    frames[pf.id] = {
-      id: pf.id,
-      frame: { x: pf.x, y: pf.y, w: pf.width, h: pf.height },
-      rotated: pf.rotated,
-      sourceSize: { w: pf.width, h: pf.height },
-      spriteSourceSize: { x: 0, y: 0, w: pf.width, h: pf.height },
-    };
+  const frames: Record<string, FrameEntry> = {};
+  for (const { name, ...entry } of entries) {
+    frames[name] = entry;
   }
-
   return {
-    meta: {
-      app: "tilepack",
-      version,
-      size: { w: packResult.atlasWidth, h: packResult.atlasHeight },
-      scale: 1,
-    },
+    meta: { image, size: atlasSize, scale: 1 },
     frames,
   };
 }
 
-export function manifestToJson(manifest: AtlasManifest): string {
-  return JSON.stringify(manifest, null, 2);
+export function manifestToJson(manifest: AtlasManifest, pretty = true): string {
+  return pretty
+    ? JSON.stringify(manifest, null, 2)
+    : JSON.stringify(manifest);
 }
 
 export function lookupFrame(
   manifest: AtlasManifest,
-  id: string
-): AtlasFrame | undefined {
-  return manifest.frames[id];
+  name: string
+): FrameEntry | undefined {
+  return manifest.frames[name];
 }
