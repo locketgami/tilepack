@@ -63,3 +63,23 @@ export function paddedSize(
     h: naturalH + border * 2,
   };
 }
+
+/**
+ * Given a frame's packed (x, y) position and size, returns the rectangle
+ * covering only the extruded region (i.e. the bleed border outside padding).
+ * Useful for filling bleed pixels separately from the padded content area.
+ */
+export function extrudeRect(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  opts: MarginOptions
+): { x: number; y: number; w: number; h: number } {
+  return {
+    x: x + opts.extrude,
+    y: y + opts.extrude,
+    w: w - opts.extrude * 2,
+    h: h - opts.extrude * 2,
+  };
+}
